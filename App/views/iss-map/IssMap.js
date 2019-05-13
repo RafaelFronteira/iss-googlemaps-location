@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import HttpRequest from '../../services/HttpRequest';
+import axios from 'axios';
 import { ActivityIndicator,
          StyleSheet,
          View,
@@ -73,29 +73,27 @@ export class IssMap extends Component {
     }
 
     getIssInformations() {
-        HttpRequest.get('http://api.open-notify.org/astros.json')
+        axios.get('http://api.open-notify.org/astros.json')
         .then(res => {
             this.setState({
                 issDescription: {
-                    astroNumber: res.number,
-                    astroNames: res.people.map((astro, index) => { return { key: index.toString(), name: astro.name }; })
+                    astroNumber: res.data.number,
+                    astroNames: res.data.people.map((astro, index) => { return { key: index.toString(), name: astro.name }; })
                 }
-             })
-            console.log('RESPONSE => ', this.state);
+             });
         })
     }
 
 
     getIssPosition() {
         setInterval(() => {
-            HttpRequest.get('http://api.open-notify.org/iss-now.json')
+            axios.get('http://api.open-notify.org/iss-now.json')
             .then(
                 res => {
                     const marker = {
-                        latitude: res.iss_position.latitude,
-                        longitude: res.iss_position.longitude
+                        latitude: res.data.iss_position.latitude,
+                        longitude: res.data.iss_position.longitude
                     };
-
 
                     this.setState({
                         loadedPosition: true, 
